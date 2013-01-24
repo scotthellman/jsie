@@ -17,13 +17,13 @@ var JSIE = function(){
 	function registerXYLines(x,y){
 		x_line = x;
 		y_line = y;
-		drawToDestination();
+		return drawToDestination();
 	}
 
 	function clearXYLines(){
 		x_line = -1;
 		y_line = -1;
-		drawToDestination();
+		return drawToDestination();
 	}
 
     function registerCropCorners(x1,y1,x2,y2){
@@ -38,7 +38,7 @@ var JSIE = function(){
     		y2 = temp;
     	}
     	positions = [x1,y1,x2,y2];
-    	drawToDestination();
+    	return drawToDestination();
     }
 
     function clearCrop(){
@@ -57,12 +57,12 @@ var JSIE = function(){
 		});
 		rotation = 0;
 		clearCrop();
-		drawToDestination();
+		return drawToDestination();
 	}
 
 	function rotate(angle){
 		rotation = angle;
-		drawToDestination();
+		return drawToDestination();
 	}
 
 	function doRotation(canvas){
@@ -112,7 +112,7 @@ var JSIE = function(){
 		overlay_buffer.height = truth.height;
 		// $(document.body).append(overlay_buffer);
 
-		drawToDestination();
+		return drawToDestination();
 	}
 
 	function updateOverlay(){
@@ -121,18 +121,26 @@ var JSIE = function(){
 		if(positions){
 			context.strokeRect(positions[0],positions[1],positions[2]-positions[0],positions[3]-positions[1]);
 		}
+		context.beginPath();
+		context.strokeStyle = "rbga(0,0,0,0.5)";
+		context.moveTo(x_line,0);
+		context.lineTo(x_line,overlay_buffer.width);
+		context.moveTo(0,y_line);
+		context.lineTo(overlay_buffer.height,y_line);
+		context.stroke();
 	}
 
 	function drawToDestination(){
 		// destination.clearRect();
 		destination.width = crop_buffer.width;
 		destination.height = crop_buffer.height;
-		overlay_buffer.width = crop_buffer.width;
-		overlay_buffer.height = crop_buffer.height;
 		destination.getContext('2d').drawImage(crop_buffer,0,0,crop_buffer.width,crop_buffer.height);
 		destination = doRotation(destination);
+		overlay_buffer.width = destination.width;
+		overlay_buffer.height = destination.height;
 		updateOverlay();
 		destination.getContext('2d').drawImage(overlay_buffer,0,0);
+		return destination;
 	}
 
 	//algo from http://stackoverflow.com/questions/9744255/instagram-lux-effect/9761841#9761841
