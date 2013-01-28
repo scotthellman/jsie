@@ -115,12 +115,11 @@ var JSIE = function(){
 		overlay_buffer = document.createElement('canvas');
 		overlay_buffer.width = truth.width;
 		overlay_buffer.height = truth.height;
-		// $(document.body).append(overlay_buffer);
+		$(document.body).append(overlay_buffer);
 
 		rotate_buffer = document.createElement('canvas');
 		rotate_buffer.width = truth.width;
 		rotate_buffer.height = truth.height;
-		$(document.body).append(rotate_buffer);
 
 		return drawToDestination();
 	}
@@ -134,9 +133,9 @@ var JSIE = function(){
 		context.beginPath();
 		context.strokeStyle = "rbga(0,0,0,0.5)";
 		context.moveTo(x_line,0);
-		context.lineTo(x_line,overlay_buffer.width);
+		context.lineTo(x_line,overlay_buffer.height);
 		context.moveTo(0,y_line);
-		context.lineTo(overlay_buffer.height,y_line);
+		context.lineTo(overlay_buffer.width,y_line);
 		context.stroke();
 	}
 
