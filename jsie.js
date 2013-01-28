@@ -66,14 +66,17 @@ var JSIE = function(){
 	}
 
 	function doRotation(canvas){
-		rotate_buffer.width = canvas.width;
-		rotate_buffer.height = canvas.height;
+		console.log(rotation);
+		rotate_buffer.width = Math.abs(Math.cos(rotation)) * canvas.width + Math.abs(Math.sin(rotation)) * canvas.height;
+		rotate_buffer.height = Math.abs(Math.sin(rotation)) * canvas.width + Math.abs(Math.cos(rotation)) * canvas.height;
 		var context = rotate_buffer.getContext('2d');
 		context.save();
-		context.translate(canvas.width/2,canvas.height/2);
+		context.translate(rotate_buffer.width/2,rotate_buffer.height/2);
 		context.rotate(rotation);
 		context.drawImage(canvas,-canvas.width/2,-canvas.height/2,canvas.width,canvas.height);
 		context.restore();
+		canvas.width = rotate_buffer.width;
+		canvas.height = rotate_buffer.height;
 		context = canvas.getContext('2d');
 		context.clearRect(0,0,canvas.width,canvas.height);
 		context.drawImage(rotate_buffer,0,0,canvas.width,canvas.height);
@@ -115,11 +118,11 @@ var JSIE = function(){
 		overlay_buffer = document.createElement('canvas');
 		overlay_buffer.width = truth.width;
 		overlay_buffer.height = truth.height;
-		$(document.body).append(overlay_buffer);
 
 		rotate_buffer = document.createElement('canvas');
 		rotate_buffer.width = truth.width;
 		rotate_buffer.height = truth.height;
+		// $(document.body).append(rotate_buffer);
 
 		return drawToDestination();
 	}
