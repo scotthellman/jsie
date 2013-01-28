@@ -66,22 +66,27 @@ var JSIE = function(){
 	}
 
 	function doRotation(canvas){
-		var width = canvas.width;
-		var height = canvas.height;
-		var context = canvas.getContext('2d');
-		canvas = Pixastic.process(canvas, "rotate", {
-			angle : rotation
-		});
-		if(rotation % 90 != 0){
-			canvas = Pixastic.process(canvas, "crop", {
-				rect : {
-					left : (canvas.width - width)/2, 
-					top : (canvas.height-height)/2,
-				 	width : width,
-				 	height : height 
-				}
-			});
-		}	
+		rotate_buffer.width = canvas.width;
+		rotate_buffer.height = canvas.height;
+		var context = rotate_buffer.getContext('2d');
+		context.save();
+		context.translate(canvas.width/2,canvas.height/2);
+		context.rotate(rotation);
+		context.drawImage(canvas,-canvas.width/2,-canvas.height/2,canvas.width,canvas.height);
+		context.restore();
+		context = canvas.getContext('2d');
+		context.clearRect(0,0,canvas.width,canvas.height);
+		context.drawImage(rotate_buffer,0,0,canvas.width,canvas.height);
+		// if(rotation % 90 != 0){
+		// 	canvas = Pixastic.process(canvas, "crop", {
+		// 		rect : {
+		// 			left : (canvas.width - width)/2, 
+		// 			top : (canvas.height-height)/2,
+		// 		 	width : width,
+		// 		 	height : height 
+		// 		}
+		// 	});
+		// }	
 		return canvas;
 	}
 
@@ -111,6 +116,11 @@ var JSIE = function(){
 		overlay_buffer.width = truth.width;
 		overlay_buffer.height = truth.height;
 		// $(document.body).append(overlay_buffer);
+
+		rotate_buffer = document.createElement('canvas');
+		rotate_buffer.width = truth.width;
+		rotate_buffer.height = truth.height;
+		$(document.body).append(rotate_buffer);
 
 		return drawToDestination();
 	}
