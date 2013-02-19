@@ -62,6 +62,7 @@ var JSIE = function(){
 
 	function rotate(angle){
 		rotation = angle;
+		clearCrop();
 		return drawToDestination();
 	}
 
