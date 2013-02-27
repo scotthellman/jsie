@@ -38,6 +38,7 @@ var JSIE = function(){
     		y2 = temp;
     	}
     	positions = [x1,y1,x2,y2];
+    	console.log(positions);
     	return drawToDestination();
     }
 
@@ -51,6 +52,12 @@ var JSIE = function(){
 		             top:positions[1],
 		            width:positions[2] - positions[0],
 		            height:positions[3]-positions[1]};
+		console.log("rect",rect);
+		clearCrop();
+		clearXYLines();
+		//resize the crop buffer to make sure it matches what's drawn on screen
+		crop_buffer.width = destination.width;
+		crop_buffer.height = destination.height;
 		crop_buffer.getContext('2d').drawImage(destination,0,0);
 		crop_buffer = Pixastic.process(crop_buffer, "crop", {
 			rect : rect
@@ -67,7 +74,6 @@ var JSIE = function(){
 	}
 
 	function doRotation(canvas){
-		console.log(rotation);
 		rotate_buffer.width = Math.abs(Math.cos(rotation)) * canvas.width + Math.abs(Math.sin(rotation)) * canvas.height;
 		rotate_buffer.height = Math.abs(Math.sin(rotation)) * canvas.width + Math.abs(Math.cos(rotation)) * canvas.height;
 		var context = rotate_buffer.getContext('2d');
@@ -103,6 +109,7 @@ var JSIE = function(){
 		if(target_height > max_height){
 			target_width *= max_height/target_height;
 			target_height = max_height;
+			console.log("shrinking");
 		}
 		canvas.height = target_height;
 		canvas.width = target_width;
@@ -207,7 +214,7 @@ var JSIE = function(){
 			else{
 				pixels[i+min_index] += 255 * delta_v * (1 - s);
 				pixels[i+middlest] += 255 * delta_v;
-				pixels[i+max_index] += delta_v * (s * (h - 1) + 1);
+				pixels[i+max_index] += 255*delta_v * (s * (h - 1) + 1);
 			}
 		}	
 		ctx.putImageData(id,0,0);
