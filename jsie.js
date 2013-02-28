@@ -100,23 +100,7 @@ var JSIE = function(){
 		return canvas;
 	}
 
-	function init(canvas,base_img,max_height) {
-		destination = canvas;
-		truth = document.createElement('canvas');
-
-		var target_width = base_img.width;
-		var target_height = base_img.height;
-		if(target_height > max_height){
-			target_width *= max_height/target_height;
-			target_height = max_height;
-			console.log("shrinking");
-		}
-		canvas.height = target_height;
-		canvas.width = target_width;
-		truth.width = target_width;
-		truth.height = target_height;
-		truth.getContext('2d').drawImage(base_img,0,0,target_width,target_height);
-
+	function reset(){
 		crop_buffer = document.createElement('canvas');
 		crop_buffer.width = truth.width;
 		crop_buffer.height = truth.height;
@@ -132,7 +116,29 @@ var JSIE = function(){
 		rotate_buffer.height = truth.height;
 		// $(document.body).append(rotate_buffer);
 
+		rotation = 0;
+
 		return drawToDestination();
+	}
+
+	function init(canvas,base_img,max_height) {
+		destination = canvas;
+		truth = document.createElement('canvas');
+
+		var target_width = base_img.width;
+		var target_height = base_img.height;
+		if(target_height > max_height){
+			target_width *= max_height/target_height;
+			target_height = max_height;
+		}
+		canvas.height = target_height;
+		canvas.width = target_width;
+		truth.width = target_width;
+		truth.height = target_height;
+		truth.getContext('2d').drawImage(base_img,0,0,target_width,target_height);
+
+		return reset();
+
 	}
 
 	function updateOverlay(){
@@ -253,6 +259,7 @@ var JSIE = function(){
 		registerXYLines : registerXYLines,
 		clearXYLines : clearXYLines,
 		registerCropCorners : registerCropCorners,
-		clearCrop : clearCrop
+		clearCrop : clearCrop,
+		reset : reset
 	}
 }();
