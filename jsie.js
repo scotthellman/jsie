@@ -121,7 +121,7 @@ var JSIE = function(){
 		return drawToDestination();
 	}
 
-	function init(canvas,base_img,max_height) {
+	function init(canvas,base_img,max_height,max_width) {
 		destination = canvas;
 		truth = document.createElement('canvas');
 
@@ -130,6 +130,10 @@ var JSIE = function(){
 		if(target_height > max_height){
 			target_width *= max_height/target_height;
 			target_height = max_height;
+		}
+		if(target_width > max_width){
+			target_height *= max_width/target_width;
+			target_width = max_width;
 		}
 		canvas.height = target_height;
 		canvas.width = target_width;
