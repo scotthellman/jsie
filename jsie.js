@@ -1,4 +1,3 @@
-
 var JSIE = function(){
 	var positions = null;
 	var index = 0;
@@ -38,7 +37,6 @@ var JSIE = function(){
     		y2 = temp;
     	}
     	positions = [x1,y1,x2,y2];
-    	console.log(positions);
     	return drawToDestination();
     }
 
@@ -52,7 +50,6 @@ var JSIE = function(){
 		             top:positions[1],
 		            width:positions[2] - positions[0],
 		            height:positions[3]-positions[1]};
-		console.log("rect",rect);
 		clearCrop();
 		clearXYLines();
 		//resize the crop buffer to make sure it matches what's drawn on screen
@@ -67,7 +64,7 @@ var JSIE = function(){
 		return drawToDestination();
 	}
 
-	function rotate(angle){
+	function setRotation(angle){
 		rotation = angle;
 		clearCrop();
 		return drawToDestination();
@@ -79,7 +76,7 @@ var JSIE = function(){
 		var context = rotate_buffer.getContext('2d');
 		context.save();
 		context.translate(rotate_buffer.width/2,rotate_buffer.height/2);
-		context.rotate(rotation);
+		context.setRotation(rotation);
 		context.drawImage(canvas,-canvas.width/2,-canvas.height/2,canvas.width,canvas.height);
 		context.restore();
 		canvas.width = rotate_buffer.width;
@@ -87,16 +84,6 @@ var JSIE = function(){
 		context = canvas.getContext('2d');
 		context.clearRect(0,0,canvas.width,canvas.height);
 		context.drawImage(rotate_buffer,0,0,canvas.width,canvas.height);
-		// if(rotation % 90 != 0){
-		// 	canvas = Pixastic.process(canvas, "crop", {
-		// 		rect : {
-		// 			left : (canvas.width - width)/2, 
-		// 			top : (canvas.height-height)/2,
-		// 		 	width : width,
-		// 		 	height : height 
-		// 		}
-		// 	});
-		// }	
 		return canvas;
 	}
 
@@ -105,7 +92,6 @@ var JSIE = function(){
 		crop_buffer.width = truth.width;
 		crop_buffer.height = truth.height;
 		crop_buffer.getContext('2d').drawImage(truth,0,0);
-		// $(document.body).append(crop_buffer);
 
 		overlay_buffer = document.createElement('canvas');
 		overlay_buffer.width = truth.width;
@@ -114,7 +100,6 @@ var JSIE = function(){
 		rotate_buffer = document.createElement('canvas');
 		rotate_buffer.width = truth.width;
 		rotate_buffer.height = truth.height;
-		// $(document.body).append(rotate_buffer);
 
 		rotation = 0;
 
@@ -161,7 +146,6 @@ var JSIE = function(){
 	}
 
 	function drawToDestination(){
-		// destination.clearRect();
 		destination.width = crop_buffer.width;
 		destination.height = crop_buffer.height;
 		destination.getContext('2d').drawImage(crop_buffer,0,0,crop_buffer.width,crop_buffer.height);
@@ -180,7 +164,6 @@ var JSIE = function(){
 		var upper = hist[Math.floor(hist.length * 0.95)]/255;
 		var contrast = (upper-lower);
 		var intensity = -1 * contrast * lower;
-		console.log(intensity + "," + contrast + ";" + lower + "," + upper);
 		img = adjustValues(img,intensity,contrast);
 		return img;
 	}
@@ -209,6 +192,7 @@ var JSIE = function(){
 			}
 			X = 1 - Math.abs((h%2) - 1);
 
+			//get the change in value and then apply that directly to rgb space
 			var delta_v = v * (1 - contrast) + intensity;
 			var max_index = v == r ? 0 : v == g ? 1 : 2;
 			var min_index = min_val == r ? 0 : min_val == g ? 1 : 2;
@@ -259,11 +243,12 @@ var JSIE = function(){
 	return {
 		init : init,
 		crop : crop,
-		rotate : rotate,
+		rotate : setRotation,
 		registerXYLines : registerXYLines,
 		clearXYLines : clearXYLines,
 		registerCropCorners : registerCropCorners,
 		clearCrop : clearCrop,
-		reset : reset
+		reset : reset,
+		autoAdjustColors:autoAdjustColors
 	}
 }();
